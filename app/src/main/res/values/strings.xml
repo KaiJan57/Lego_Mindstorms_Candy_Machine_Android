@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">NXT candimachine controller</string>
+    <string name="title_connection_activity">Connect to NXT</string>
+    <string name="choose_device">Choose a paired NXT:</string>
+    <string name="bt_not_supported">Bluetooth is not supported on your device.</string>
+    <string name="inserted_coins">Inserted coins:&#160;</string>
+    <string name="throw_candy">Push a candy</string>
+    <string name="block_coins">Block coins</string>
+    <string name="connect">Connect</string>
+    <string name="bt_activate_message">Bluetooth is not activated yet. Activate now?</string>
+    <string name="bt_title">Activate Bluetooth</string>
+    <string name="wait_info">Please wait</string>
+    <string name="sending">Sending...</string>
+    <string name="error">Error!</string>
+    <string name="sent">Sent.</string>
+    <string name="connected_with">Connected with:&#160;</string>
+    <string name="not_connected">Not Connected! Please reconnect!</string>
+    <string name="error_reply">Error!\nIs the NXT-Program running?</string>
+    <string name="info_reply">Additional Information:</string>
+    <string name="start_program">Start NXT-Program</string>
+    <string name="connecting">Connecting...</string>
+    <string name="disconnecting">Disconnecting...</string>
+    <string name="nothing_to_show">I can not show your current NXT.</string>
+</resources>

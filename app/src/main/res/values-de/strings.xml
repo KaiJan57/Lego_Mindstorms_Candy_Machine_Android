@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NXT Bonbonautomat steuerung</string>
+    <string name="title_connection_activity">NXT verbinden</string>
+    <string name="choose_device">Gepairten NXT auswählen:</string>
+    <string name="bt_not_supported">Bluetooth wird auf deinem Gerät nicht unterstützt.</string>
+    <string name="inserted_coins">Eingeworfene Münzen:&#160;</string>
+    <string name="throw_candy">Bonbon auswerfen</string>
+    <string name="block_coins">Münzen blockieren</string>
+    <string name="connect">Verbinden</string>
+    <string name="bt_activate_message">Bluetooth ist deaktiviert. Möchtest du es aktivieren?</string>
+    <string name="bt_title">Bluetooth aktivieren</string>
+    <string name="wait_info">Bitte warten</string>
+    <string name="sending">Senden...</string>
+    <string name="error">Fehler!</string>
+    <string name="sent">Gesendet.</string>
+    <string name="connected_with">Verbunden mit:&#160;</string>
+    <string name="not_connected">Nicht verbunden! Bitte verbinde dich erneut!</string>
+    <string name="error_reply">Fehler!\nLäuft das NXT-Programm?</string>
+    <string name="info_reply">Zusätzliche Information:</string>
+    <string name="start_program">NXT-Programm starten</string>
+    <string name="disconnecting">Verbindung trennen...</string>
+    <string name="connecting">Verbinden...</string>
+    <string name="nothing_to_show">Ich kann nicht deinen NXT anzeigen.</string>
+</resources>
