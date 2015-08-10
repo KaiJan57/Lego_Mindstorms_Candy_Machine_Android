@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NXT Bonbonautomat steuerung</string>
+    <string name="app_name">NXT Bonbonautomat Steuerung</string>
     <string name="title_connection_activity">NXT verbinden</string>
     <string name="choose_device">Gepairten NXT auswählen:</string>
     <string name="bt_not_supported">Bluetooth wird auf deinem Gerät nicht unterstützt.</string>

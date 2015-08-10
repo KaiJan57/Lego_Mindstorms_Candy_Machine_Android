@@ -10,8 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -24,38 +24,89 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+import static android.bluetooth.BluetoothAdapter.*;
+
 
 public class ActivityConnect extends AppCompatActivity {
 
+    public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    static BluetoothAdapter btAdapter;
     public BluetoothSocket mmSocket;
     public BluetoothDevice mmDevice;
     public InputStream nxtOUT;
     public OutputStream nxtIN;
-    public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     Spinner spinner2;
-    static BluetoothAdapter btAdapter;
-    ArrayList<String> btdevices = new ArrayList<String>();
-    ArrayList<BluetoothDevice> btdev = new ArrayList<BluetoothDevice>();
+    int selection;
+    ArrayList<String> btdevices;
+    ArrayList<BluetoothDevice> btdev;
+    public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
 
+            if (action.equals(ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(EXTRA_STATE, ERROR);
+                switch (state) {
+                    case STATE_OFF:
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        btAdapter.enable();
+                                        break;
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        unregisterReceiver(mReceiver);
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityConnect.this);
+                        builder.setMessage(getString(R.string.bt_activate_message))
+                                .setPositiveButton(android.R.string.ok, dialogClickListener)
+                                .setNegativeButton(android.R.string.cancel, dialogClickListener)
+                                .setTitle(getString(R.string.bt_title))
+                                .setCancelable(false)
+                                .show();
+                        break;
+                    case STATE_TURNING_OFF:
+
+                        break;
+                    case STATE_ON:
+                        btupdate();
+                        break;
+                    case STATE_TURNING_ON:
+                        btdev.clear();
+                        btdevices.clear();
+                        break;
+                }
+            }
+        }
+    };
+
+    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        spinner2 = (Spinner) findViewById(R.id.spinner1);
-        savedInstanceState.putInt("selected_item", (int) spinner2.getSelectedItemPosition());
-        Toast.makeText(this, String.valueOf(savedInstanceState.getInt("selected_item")), Toast.LENGTH_SHORT);
+        savedInstanceState.putInt("selected_item", spinner2.getSelectedItemPosition());
     }
 
+    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        spinner2 = (Spinner) findViewById(R.id.spinner1);
-        spinner2.setSelection(savedInstanceState.getInt("selected_item"));
-        Toast.makeText(this, String.valueOf(savedInstanceState.getInt("selected_item")), Toast.LENGTH_SHORT);
+        super.onRestoreInstanceState(savedInstanceState);
+        selection = savedInstanceState.getInt("selected_item");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        btdevices = new ArrayList<String>();
+        btdev = new ArrayList<BluetoothDevice>();
         setContentView(R.layout.activity_connect);
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        btAdapter = getDefaultAdapter();
 
         if (btAdapter == null) {
             Toast.makeText(this, getString(R.string.bt_not_supported), Toast.LENGTH_LONG).show();
@@ -91,9 +142,16 @@ public class ActivityConnect extends AppCompatActivity {
 
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        spinner2 = (Spinner) findViewById(R.id.spinner1);
+        IntentFilter filter = new IntentFilter(ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
         btupdate();
+        if(String.valueOf(selection).equals("") && !btdev.isEmpty()) {
+            selection = 0;
+        }
+        if(!btdev.isEmpty()) {
+            spinner2.setSelection(selection, true);
+        }
     }
 
     public void btupdate() {
@@ -103,7 +161,6 @@ public class ActivityConnect extends AppCompatActivity {
             btdev.add(bt);
         }
 
-        //Toast.makeText(getApplicationContext(), String.valueOf(btdevices.size()), Toast.LENGTH_SHORT).show();
         spinner2 = (Spinner) findViewById(R.id.spinner1);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, btdevices);
@@ -195,52 +252,4 @@ public class ActivityConnect extends AppCompatActivity {
         // Unregister broadcast listeners
         unregisterReceiver(mReceiver);
     }
-
-    public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-                        BluetoothAdapter.ERROR);
-                switch (state) {
-                    case BluetoothAdapter.STATE_OFF:
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        btAdapter.enable();
-                                        break;
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        unregisterReceiver(mReceiver);
-                                        android.os.Process.killProcess(android.os.Process.myPid());
-                                        break;
-                                }
-                            }
-                        };
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityConnect.this);
-                        builder.setMessage(getString(R.string.bt_activate_message))
-                                .setPositiveButton(android.R.string.ok, dialogClickListener)
-                                .setNegativeButton(android.R.string.cancel, dialogClickListener)
-                                .setTitle(getString(R.string.bt_title))
-                                .setCancelable(false)
-                                .show();
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        btupdate();
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        btdev.clear();
-                        btdevices.clear();
-                        break;
-                }
-            }
-        }
-    };
 }
