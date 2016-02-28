@@ -335,6 +335,7 @@ public class ActivityControl extends AppCompatActivity {
                         }
                     });
                     using_pipeline = false;
+                    ActivityControl.this.recreate();
                 }
 
                 try {
